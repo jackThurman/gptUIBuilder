@@ -1,0 +1,7 @@
+Need an detailed user for system. No ambigioity on what it should be doing.
+
+It reads the prompt and writes the code, then exits the process.
+
+Need it to remember what it previously wrote and then add the changes
+while maintaining previous features
+

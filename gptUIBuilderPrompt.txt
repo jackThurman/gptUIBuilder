@@ -1,0 +1,12 @@
+Every UI element mentioned in this document should be style professionally. I want you to use nice fonts, matching colours and spacing so that the UI is minimal and easy to use.
+
+I need a UI that has a text input field and a 'CREATE' button.
+
+The app needs a title called 'GPT UI Builder' that should be in the top middle.
+
+When the submit button is pressed I would like it to run a function called onSend()
+
+The text field should also be cleared after 'CREATE' is pressed.
+
+When onSend() is finished I want the system to end.
+
