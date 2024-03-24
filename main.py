@@ -1,12 +1,14 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QTextEdit, QLabel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import subprocess
 import sys
 import os
+import chatCompletion as cc
 from openai import OpenAI
 
 client = OpenAI()
+destinationPath = 'UI.py'
 
 class GPTUIBuilder(QWidget):
     def __init__(self):
@@ -25,14 +27,14 @@ class GPTUIBuilder(QWidget):
         titleLabel.setAlignment(Qt.AlignCenter)
 
         # Text input field
-        self.textInput = QLineEdit(self)
+        self.textInput = QTextEdit(self)
         self.textInput.setFont(QFont('Arial', 12))
         self.textInput.setPlaceholderText('Enter your prompt here...')
 
         # Create button
         createButton = QPushButton('CREATE', self)
         createButton.setFont(QFont('Arial', 12, QFont.Bold))
-        createButton.clicked.connect(self.onSend)
+        createButton.clicked.connect(lambda: cc.create(client,self.textInput,destinationPath,app))
 
         layout.addWidget(titleLabel)
         layout.addWidget(self.textInput)
@@ -40,53 +42,8 @@ class GPTUIBuilder(QWidget):
 
         self.setLayout(layout)
 
-    def onSend(self):
-        prompt = self.textInput.text()
-        exampleResponse = open('example.py','r').read()
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a python developer who is an expert using PyQt5. You only return code in your response"},
-                {"role": "user", "content": "Generate me some python code using PyQt5 that will create a UI with a label saying 'Jack'. Return code only."},
-                {"role": "system", "content": exampleResponse},
-                {"role": "user", "content": prompt},
-            ]
-        )
-        generated_code = response.choices[0].message.content
-        clean_code = self.cleanResponse(generated_code)
-        self.updateUIFile(clean_code)
-        self.textInput.clear()
-        self.runUIFile()
-
-
-    def updateUIFile(self, code):
-        with open('UI.py', 'w') as file:
-            file.write("\n" + code)
-
-    def runUIFile(self):
-        script_path = 'UI.py'
-        venv_python_path = os.path.join('.venv', 'Scripts', 'python.exe')  
-        try:
-            subprocess.run([venv_python_path,script_path], check=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Error occurred while running {script_path}: {e}")
-        finally:
-            QApplication.instance().quit()
-            sys.exit()
-
-    def cleanResponse(self, response):
-        cleaned_response = response.strip()
-
-        if cleaned_response.startswith('```python'):
-            cleaned_response = cleaned_response[len('```python'):].strip()
-        if cleaned_response.endswith('```'):
-            cleaned_response = cleaned_response[:-len('```')].strip()
-
-        return cleaned_response
-
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    ex = GPTUIBuilder()
-    ex.show()
+    mainUI = GPTUIBuilder()
+    mainUI.show()
     sys.exit(app.exec_())
