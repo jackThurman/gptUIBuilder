@@ -1,13 +1,3 @@
-Need an detailed user for system. No ambigioity on what it should be doing.
-
-Add base case as a user response
-
-Tell the model it should build off of this base case.
-
-Pass the previous chats to the model so it can recursively add features.   
-
-Make it so that two windows are open simultaneously. 
-
 Close and reopen second window on addition of a new feature
 
 https://community.openai.com/t/how-can-i-maintain-conversation-continuity-with-chat-gpt-api/574819/3

@@ -1,26 +1,24 @@
-import os, sys, subprocess
+import os, subprocess
 
-def create(client,textInputField,destinationPath,QApp):
+def create(client,textInputField,parentUI):
         prompt = textInputField.toPlainText()
         textInputField.clear()
         conversation = open('conversation.txt').readlines()
-        exampleResponse = open('example.py','r').read()
-        improvedExampleResponse = open('example2.py','r').read()
+        baseWindow = open('base.py','r').read()
+        promptExt = conversation[0]+' prompt:'+prompt+' window:'+baseWindow
+        print(promptExt)
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": conversation[0]},
-                {"role": "user", "content": conversation[1]},
-                {"role": "assistant", "content": exampleResponse},
-                {"role": "user", "content": conversation[2]},
-                {"role": "assistant", "content": improvedExampleResponse},
-                {"role": "user", "content": prompt},
+                {"role": "user", "content": promptExt},
             ])
         generated_code = response.choices[0].message.content
         clean_code = cleanResponse(generated_code)
-        updateFile(destinationPath,clean_code)  #Does up to here, then no other window shows
-        from UI import window
+        updateFile('base.py',clean_code)  #Does up to here, then no other window shows
+        from base import window
         generatedWindow = window()
+        parentUI.generatedWindows.append(generatedWindow)
         generatedWindow.show()
 
 def cleanResponse(response):
