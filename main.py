@@ -45,6 +45,7 @@ class GPTUIBuilder(QWidget):
         self.setLayout(layout)
 
 if __name__ == "__main__":
+    cc.clearFiles(client)
     app = QApplication(sys.argv)
     mainUI = GPTUIBuilder()
     mainUI.generatedWindows.append(mainUI)
